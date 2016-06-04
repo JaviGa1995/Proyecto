@@ -50,7 +50,7 @@ router.get('/users/:userId(\\d+)/quizzes', sessionController.loginRequired,
 
 // Definición de rutas de /quizzes
 router.get('/quizzes.:format?',                     	quizController.index);
-router.get('/quizzes/:quizId(\\d+).:format?',       	quizController.show);
+router.get('/quizzes/:quizId(\\d+).:format?',       	userController.indexReturn, quizController.show);
 router.get('/quizzes/:quizId(\\d+)/check', 	quizController.check);
 router.get('/quizzes/new',                 	sessionController.loginRequired, 
 											quizController.new);

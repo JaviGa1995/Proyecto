@@ -3,6 +3,7 @@ var models = require('../models');
 var Sequelize = require('sequelize');
 var cloudinary = require('cloudinary');
 var fs = require('fs');
+var userController = require('./user_controller');
 var url = require('url');
 var paginate = require('./paginate').paginate;
 
@@ -146,9 +147,18 @@ exports.show = function(req, res, next) {
   if (tipo == "json") {
    res.send("<html><head></head><body>"+JSON.stringify(req.quiz)+"</body></html>");
   } else {
-    var answer = req.query.answer || "";
-    res.render('quizzes/show', {quiz: req.quiz, answer: answer});    
- }
+    models.User.findById(req.quiz.AuthorId)
+        .then(function(user) { 
+          var autor;
+          if(user)
+            autor = user.username;
+          else autor = "Usuario no encontrado";
+          console.log("Lo encontrado es: " +autor);
+          var answer = req.query.answer || "";
+          console.log("El primer usuario mandado es: " +req.users[1].username);
+          res.render('quizzes/show', {quiz: req.quiz, answer: answer, autor: autor, users: req.users});    
+        });
+   }
 };
 
 
