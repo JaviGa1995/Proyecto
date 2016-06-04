@@ -142,13 +142,43 @@ exports.index = function(req, res, next) {
 // GET /quizzes/:quizId
 exports.show = function(req, res, next) {
 
-  var tipo = req.params.format;
-  if (tipo == "json") {
-   res.send("<html><head></head><body>"+JSON.stringify(req.quiz)+"</body></html>");
-  } else {
-    var answer = req.query.answer || "";
-    res.render('quizzes/show', {quiz: req.quiz, answer: answer});    
- }
+	var answer = req.query.answer || '';
+
+    // Para usuarios logeados:
+    //   Si el quiz es uno de mis favoritos, creo un atributo llamado
+    //   "favourite" con el valor true.
+    if (req.session.user) {
+
+        req.quiz.getFans({where: {id: req.session.user.id}})
+            .then(function(fans) {
+                if (fans.length > 0) {
+                    req.quiz.favourite = true
+                }      
+            })
+            .then(function() {
+                res.render('quizzes/show', { quiz: req.quiz,
+                                             answer: answer});
+            })
+            .catch(function(error){
+                next(error);
+            });
+    } else {
+        res.render('quizzes/show', {quiz: req.quiz,
+                                    answer: answer});
+    }
+};
+
+
+// GET /quizzes/:quizId/check
+exports.check = function(req, res, next) {
+
+	var answer = req.query.answer || "";
+
+	var result = answer === req.quiz.answer ? 'Correcta' : 'Incorrecta';
+
+	res.render('quizzes/result', { quiz: req.quiz, 
+								   result: result, 
+								   answer: answer });
 };
 
 
