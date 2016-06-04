@@ -91,5 +91,17 @@ app.use(function(err, req, res, next) {
   });
 });
 
+//Comprueba si hay un usuario logeado y si han pasado más de dos minutos hace logout
+app.use(function(req,res,next) {
+  if (req.session.user) {
+    if (req.session.user.expires>Date.now()){
+      req.session.user.expires=Date.now()+120000;
+    }
+    else{
+      delete req.session.user;
+    }
+  }
+  next();
+});
 
 module.exports = app;
