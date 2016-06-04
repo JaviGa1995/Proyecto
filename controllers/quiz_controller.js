@@ -13,7 +13,7 @@ var cloudinary_image_options = { crop: 'limit', width: 200, height: 200, radius:
 
 
 
- exports.index = function(req, res, next) 
+ exports.index = function(req, res, next){ 
 	if(req.query.search){
 		models.Quiz.findAll({ where: ["question like ?",'%' + req.query.search + '%']})
 		  .then(models.Quiz.findAll({ order: ['question']}))
